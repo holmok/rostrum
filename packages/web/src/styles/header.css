@@ -1,0 +1,58 @@
+header {
+    background-color: black;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 5rem;
+    line-height: 5rem;
+    z-index: 999;
+  }
+
+  header * {
+      color:white;
+  }
+
+  header .logo {
+      font-weight:900;
+  }
+  header .hamburger {
+    font-size: 2rem;
+    display: inline-block;
+    padding-right: 0.5rem;
+}
+
+  #navigation {
+    text-align: right;
+  }
+  
+  #navigation>ul {
+    float: right;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    position: relative;
+    top: -1px;
+  }
+  
+  #navigation>ul>li {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: center;
+  }
+  
+  #navigation>ul>li>a {
+    display: block;
+    padding: 0 3rem;
+    height: auto;
+    line-height: 3rem;
+    margin: 0;
+    text-decoration: none;
+  }
+  
+  #navigation>ul>li>a:hover {
+    background-color: #333;
+    color: #ccc;
+  }

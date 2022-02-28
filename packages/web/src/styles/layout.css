@@ -1,0 +1,11 @@
+body {
+    margin-top: 6rem;
+    margin-bottom: 6rem;
+  }
+  
+  .lcr-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
