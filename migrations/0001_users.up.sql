@@ -7,7 +7,6 @@ CREATE TABLE "users" (
     "email" TEXT NOT NULL UNIQUE,
     "username" TEXT NOT NULL UNIQUE,
     "password_hash" TEXT NOT NULL,
-    "enabled" boolean NOT NULL DEFAULT true,
     "created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     "updated" TIMESTAMP WITH TIME ZONE NULL,
     "last_login" TIMESTAMP WITH TIME ZONE NULL,

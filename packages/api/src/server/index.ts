@@ -7,6 +7,7 @@ import Routes from './routes'
 import Services, { ServiceList } from './services'
 import { ServerOptions } from '../config/default'
 import KoaLogger from 'koa-pino-logger'
+import KoaBodyParser from 'koa-bodyparser'
 
 export type ServerContextState = Koa.DefaultState & {
   config: Config.IConfig
@@ -66,7 +67,7 @@ class Server {
     const host = `http://${serverOptions.host}:${serverOptions.port.toString()}`
 
     // set up server context/state for request/response
-    this.logger.debug('setting up server context')
+    this.logger.debug('Setting up server context.')
     const services = Services(this.config, this.logger)
     this.app.use(async (ctx: ServerContext, next) => {
       ctx.state.config = this.config
@@ -79,11 +80,15 @@ class Server {
     })
 
     // Cors
-    this.logger.debug('setting up cors')
+    this.logger.debug('Setting up cors.')
     this.app.use(Cors())
 
+    // Body Parser
+    this.logger.debug('Setting up body parser.')
+    this.app.use(KoaBodyParser())
+
     // Routes
-    this.logger.debug('setting up routes')
+    this.logger.debug('Setting up routes.')
     const routes = Routes()
     routes.forEach(route => { this.app.use(route) })
 

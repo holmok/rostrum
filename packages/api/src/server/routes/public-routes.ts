@@ -1,7 +1,8 @@
 
 import KoaRouter from '@koa/router'
-import { EchoRequest } from '@rostrum/common'
 import { ServerContext } from '../index'
+
+import { EchoRequest } from '@rostrum/common'
 
 const publicRouter = new KoaRouter()
 

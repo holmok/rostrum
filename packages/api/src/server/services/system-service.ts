@@ -12,7 +12,7 @@ class SystemService {
     private readonly config: IConfig,
     private readonly logger: Logger
   ) {
-    this.logger.debug('Initialize SimpleService')
+    this.logger.debug('SystemService initialized.')
     this.name = config.get('name')
     this.environment = config.get('environment')
   }
