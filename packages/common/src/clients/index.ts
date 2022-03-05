@@ -1,10 +1,10 @@
 import Axios from 'axios'
-import SimpleClient from './simple-client'
+import SystemClient from './system-client'
 
-export * from './simple-client'
+export * from './system-client'
 
 export interface Clients {
-  simple: () => SimpleClient
+  system: () => SystemClient
 }
 
 export function InitClients (baseURL: string, timeout: number = 5000): Clients {
@@ -13,6 +13,6 @@ export function InitClients (baseURL: string, timeout: number = 5000): Clients {
     timeout
   })
   return {
-    simple: () => new SimpleClient(axios)
+    system: () => new SystemClient(axios)
   }
 }

@@ -2,9 +2,23 @@ import Config from 'config'
 import Pino from 'pino'
 import Koa from 'koa'
 import Http from 'http'
-import { ServerOptions, ServerContextState, ServerContext } from '../types'
 import Cors from '@koa/cors'
 import Routes from './routes'
+import Services, { ServiceList } from './services'
+import { ServerOptions } from '../config/default'
+import KoaLogger from 'koa-pino-logger'
+
+export type ServerContextState = Koa.DefaultState & {
+  config: Config.IConfig
+  logger: Pino.Logger
+  name: string
+  environment: string
+  dev: boolean
+  host: string
+  services: ServiceList
+}
+
+export type ServerContext = Koa.ParameterizedContext<ServerContextState>
 
 export async function start (): Promise<void> {
   const logger = Pino(Config.get('pino'))
@@ -46,17 +60,21 @@ class Server {
     const name: string = this.config.get('name')
     this.logger.info('%s server starting.', name)
 
+    this.app.use(KoaLogger({ logger: this.logger }))
+
     const serverOptions: ServerOptions = this.config.get('server')
     const host = `http://${serverOptions.host}:${serverOptions.port.toString()}`
 
     // set up server context/state for request/response
     this.logger.debug('setting up server context')
+    const services = Services(this.config, this.logger)
     this.app.use(async (ctx: ServerContext, next) => {
       ctx.state.config = this.config
       ctx.state.name = this.config.get('name')
       ctx.state.environment = this.config.get('environment')
       ctx.state.host = host
       ctx.state.dev = this.config.get('environment') !== 'production'
+      ctx.state.services = services
       await next()
     })
 

@@ -1,7 +1,7 @@
 import Koa from 'koa'
 
 import PublicRoutes from './public-routes'
-import { ServerContextState, ServerContext } from '../../types'
+import { ServerContextState, ServerContext } from '../index'
 const routes = [
   PublicRoutes.routes(),
   PublicRoutes.allowedMethods()

@@ -1,7 +1,7 @@
 {
   "name": "@rostrum/common",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^17.0.21"

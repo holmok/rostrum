@@ -1,5 +1,10 @@
 import Pino from 'pino'
-import { ServerOptions } from '../types'
+
+export interface ServerOptions {
+  host: string
+  port: number
+}
+
 export const name: string = 'Rostrum'
 
 export const environment = process.env.NODE_ENV ?? 'development'
@@ -11,5 +16,5 @@ export const pino: Pino.LoggerOptions = {
 
 export const server: ServerOptions = {
   host: process.env.HOST ?? 'localhost',
-  port: parseInt(process.env.PORT ?? '3000', 10)
+  port: parseInt(process.env.PORT ?? '3001', 10)
 }
