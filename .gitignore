@@ -4,3 +4,4 @@ dist/
 *.gz
 .DS_Store
 .next
+.env

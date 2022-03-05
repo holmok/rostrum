@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 import { getClients } from '../pages/_app'
-import { SimpleRequest } from '@rostrum/common'
+import { EchoRequest } from '@rostrum/common'
 import SWR from 'swr'
 import SimpleClient from '@rostrum/common/dist/clients/system-client'
 
@@ -9,10 +9,10 @@ export interface EchoProps {
 }
 
 export default function Echo (props: EchoProps): ReactElement {
-  const simple: SimpleClient = getClients().simple()
-  const request: SimpleRequest = { message: props.message }
+  const system: SimpleClient = getClients().system()
+  const request: EchoRequest = { message: props.message }
 
-  const { data, error } = SWR(`${simple.names.echo}_${props.message}`, async () => await simple.echo(request))
+  const { data, error } = SWR(`${system.names.echo}_${props.message}`, async () => await system.echo(request))
 
   if (data == null) {
     return (<></>) // loading

@@ -1,5 +1,6 @@
 import { IConfig } from 'config'
 import { Logger } from 'pino'
+import Data from '../data'
 
 import SystemService from './system-service'
 
@@ -8,8 +9,11 @@ export interface ServiceList {
 }
 
 export default function Services (config: IConfig, logger: Logger): ServiceList {
-  const simple = new SystemService(config, logger)
+  const data = Data(config, logger)
+  const system = new SystemService(data.system(), config, logger)
   return {
-    system () { return simple }
+    system () {
+      return system
+    }
   }
 }

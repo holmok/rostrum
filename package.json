@@ -16,6 +16,8 @@
     "typescript": "^4.4.0"
   },
   "scripts": {
+    "migrate:create": "migrate create -ext sql -seq  -digits 4 -dir ${PWD}/migrations",
+    "migrate": "./migrate.sh",
     "dev:api": "cd packages/api && yarn run dev",
     "dev:web": "cd packages/web && yarn run dev",
     "start:api": "cd packages/api && yarn start",
@@ -27,5 +29,6 @@
     "build:web": "lerna run build --scope=@rostrum/web",
     "bootstrap": "lerna bootstrap",
     "rebuild": "lerna clean -y && lerna bootstrap && lerna run build"
-  }
+  },
+  "dependencies": {}
 }

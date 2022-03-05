@@ -15,11 +15,18 @@ async function getOk (ctx: ServerContext): Promise<void> {
 }
 
 async function getReady (ctx: ServerContext): Promise<void> {
-  ctx.body = { status: 'ready' }
+  const system = ctx.state.services.system()
+  const isReady = await system.ready()
+  if (isReady) {
+    ctx.body = { status: 'ready' }
+  } else {
+    ctx.status = 503
+    ctx.body = { status: 'not ready' }
+  }
 }
 
 async function getEcho (ctx: ServerContext): Promise<void> {
   const request: EchoRequest = { message: ctx.request.query.message as string }
-  const { echo } = ctx.state.services.system()
-  ctx.body = echo(request)
+  const system = ctx.state.services.system()
+  ctx.body = system.echo(request)
 }
