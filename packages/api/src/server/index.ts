@@ -8,6 +8,7 @@ import Services, { ServiceList } from './services'
 import { ServerOptions } from '../config/default'
 import KoaLogger from 'koa-pino-logger'
 import KoaBodyParser from 'koa-bodyparser'
+import ErrorHandler from './middleware/error-handler'
 
 export type ServerContextState = Koa.DefaultState & {
   config: Config.IConfig
@@ -62,6 +63,9 @@ class Server {
     this.logger.info('%s server starting.', name)
 
     this.app.use(KoaLogger({ logger: this.logger }))
+    // Cors
+    this.logger.debug('Setting error handler.')
+    this.app.use(ErrorHandler())
 
     const serverOptions: ServerOptions = this.config.get('server')
     const host = `http://${serverOptions.host}:${serverOptions.port.toString()}`
