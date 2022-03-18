@@ -1,6 +1,9 @@
+html {
+  background-color: #FDF5DF;
+}
 body {
-    margin-top: 6rem;
-    margin-bottom: 6rem;
+    margin-top: 8rem;
+    margin-bottom: 12rem;
   }
   
   .lcr-container {
@@ -13,4 +16,8 @@ body {
   pre.code {
     padding: 1.5rem 2.5rem;
     border-color: black;
+  }
+
+  h1{
+    color: #F92C85;
   }

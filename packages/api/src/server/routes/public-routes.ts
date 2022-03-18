@@ -12,7 +12,7 @@ export default publicRouter
   .get('/ready', getReady)
   .get('/echo', ValidationHandler({
     query: Joi.object({
-      message: Joi.string()
+      message: Joi.string().required()
     })
   }), getEcho)
 
@@ -32,7 +32,7 @@ async function getReady (ctx: ServerContext): Promise<void> {
 }
 
 async function getEcho (ctx: ServerContext): Promise<void> {
-  const request: EchoRequest = { message: ctx.request.query.message as string }
+  const request: EchoRequest = ctx.state.validated.query
   const system = ctx.state.services.system()
   ctx.body = system.echo(request)
 }

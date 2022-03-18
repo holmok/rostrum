@@ -1,5 +1,5 @@
 footer {
-    background-color: black;
+    background-color: #5EBEC4;
     position: fixed;
     width: 100%;
     bottom: 0;
@@ -8,6 +8,7 @@ footer {
     line-height: 5rem;
     z-index: 999;
   }
+
   footer * {
-      color: white;
+      color: #FDF5DF;
   }

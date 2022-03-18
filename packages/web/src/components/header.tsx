@@ -3,12 +3,12 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 const PageHeader: NextComponentType = () => {
-const [menuVisible, setMenuVisible] = useState(false)
-const toggle = () => {
+  const [menuVisible, setMenuVisible] = useState(false)
+  const toggle = () => {
     console.log('TOGGLE!!')
     setMenuVisible(!menuVisible)
-}
-const hide = () => setMenuVisible(false)
+  }
+  const hide = () => setMenuVisible(false)
   return (
     <header>
       <section className='container' id='header'>
@@ -18,14 +18,14 @@ const hide = () => setMenuVisible(false)
           <div><Link href='#'><a onClick={toggle} id='menu'><span className='hamburger'>☰</span></a></Link></div>
         </div>
       </section>
-       <section className='container' id='menu-container' style={menuVisible ? { display: 'block' } : { display: 'none' }}>
-        <div id='navigation'>
+      <section className='container' id='menu-container' style={menuVisible ? { display: 'block' } : { display: 'none' }}>
+         <div id='navigation'>
           <ul>
             <li><Link href='/'><a onClick={hide}>Home</a></Link></li>
             <li><Link href='/about'><a onClick={hide}>About</a></Link></li>
           </ul>
         </div>
-      </section>
+       </section>
     </header>
   )
 }

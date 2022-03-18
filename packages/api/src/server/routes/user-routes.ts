@@ -1,6 +1,8 @@
 import KoaRouter from '@koa/router'
+import Joi from 'joi'
 import { ORDER, Page, UserStatus, UserType } from '../data/user-data'
 import { ServerContext } from '../index'
+import ValidationHandler from '../middleware/validation-handler'
 
 const publicRouter = new KoaRouter()
 
@@ -23,15 +25,25 @@ export interface UpdateUserRequest {
 }
 
 export default publicRouter
-  .post('/users', postUser)
+  .post('/users', ValidationHandler({
+    body: Joi.object({
+      email: Joi.string().email().required(),
+      username: Joi.string().required(),
+      password: Joi.string().required().min(8)
+    })
+  }), postUser)
   .put('/users/:id', putUser)
-  .get('/users/:id', getUser)
+  .get('/users/:id', ValidationHandler({
+    params: Joi.object({
+      id: Joi.number().integer().required()
+    })
+  }), getUser)
   .get('/users', getUsers)
   .post('/users/login', postUserLogin)
 
 async function postUser (ctx: ServerContext): Promise<void> {
   const service = ctx.state.services.users()
-  const request: RegisterUserRequest = ctx.request.body
+  const request: RegisterUserRequest = ctx.state.validated.body
   const user = await service.register(request)
   ctx.body = user
 }
@@ -74,7 +86,8 @@ async function getUsers (ctx: ServerContext): Promise<void> {
 
 async function getUser (ctx: ServerContext): Promise<void> {
   const service = ctx.state.services.users()
-  const user = await service.getById(ctx.params.id)
+  const id: number = ctx.state.validated.params.id
+  const user = await service.getById(id)
   ctx.body = user
 }
 
