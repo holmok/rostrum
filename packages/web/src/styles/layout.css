@@ -1,5 +1,5 @@
 html {
-  background-color: #FDF5DF;
+  background-color: white;
 }
 body {
     margin-top: 8rem;
@@ -11,13 +11,4 @@ body {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
-  }
-
-  pre.code {
-    padding: 1.5rem 2.5rem;
-    border-color: black;
-  }
-
-  h1{
-    color: #F92C85;
   }

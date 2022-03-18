@@ -13,19 +13,19 @@ const PageHeader: NextComponentType = () => {
     <header>
       <section className='container' id='header'>
         <div className='lcr-container'>
-          <div><Link href='/'><a><span className='logo'>Rostrum</span></a></Link></div>
+          <div><Link href='/'><a><span className='logo'>Nine by Me</span></a></Link></div>
           {/* <div>center</div> */}
           <div><Link href='#'><a onClick={toggle} id='menu'><span className='hamburger'>☰</span></a></Link></div>
         </div>
       </section>
       <section className='container' id='menu-container' style={menuVisible ? { display: 'block' } : { display: 'none' }}>
-         <div id='navigation'>
+        <div id='navigation'>
           <ul>
             <li><Link href='/'><a onClick={hide}>Home</a></Link></li>
             <li><Link href='/about'><a onClick={hide}>About</a></Link></li>
           </ul>
         </div>
-       </section>
+      </section>
     </header>
   )
 }
