@@ -4,11 +4,11 @@ import { useState } from 'react'
 
 const PageHeader: NextComponentType = () => {
   const [menuVisible, setMenuVisible] = useState(false)
-  const toggle = () => {
+  const toggle = (): void => {
     console.log('TOGGLE!!')
     setMenuVisible(!menuVisible)
   }
-  const hide = () => setMenuVisible(false)
+  const hide = (): void => setMenuVisible(false)
   return (
     <header>
       <section className='container' id='header'>
