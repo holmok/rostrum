@@ -3,9 +3,9 @@ html {
 }
 
 body {
-  color: white;
-  margin-top: 8rem;
-  margin-bottom: 12rem;
+  background-color: white;
+  padding-top: 6rem;
+  padding-bottom: 6rem;
 }
 
 .lcr-container {
