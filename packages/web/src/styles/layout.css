@@ -1,14 +1,16 @@
 html {
-  background-color: white;
+  background-color: black;
 }
+
 body {
-    margin-top: 8rem;
-    margin-bottom: 12rem;
-  }
-  
-  .lcr-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-  }
+  color: white;
+  margin-top: 8rem;
+  margin-bottom: 12rem;
+}
+
+.lcr-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
