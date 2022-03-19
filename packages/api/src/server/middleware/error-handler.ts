@@ -5,22 +5,15 @@ export default function ErrorHandler (): Middleware<ServerContextState, ServerCo
   return async (ctx: ServerContext, next: Next) => {
     try {
       await next()
-      const status = ctx.status ?? 404
-      if (status === 404) {
-        ctx.throw(404, 'Not Found')
-      }
     } catch (error: any) {
-      let code = 500
-      let msg = 'Internal Server Error'
-      if (ctx.status === 401) {
-        msg = 'Unauthorized'
-        code = 401
-      } else {
-        const parts = /^([1-5][0-9]{2}):(.*)$/g.exec(error.message) ?? []
-        code = parts[1] != null ? parseInt(parts[1], 10) : code
-        msg = parts[2] ?? msg
+      const parts = /^([1-5][0-9]{2}):(.*)$/g.exec(error.message) ?? []
+      const code = parts[1] != null ? parseInt(parts[1], 10) : 500
+      const msg = parts[2] ?? 'Internal Server Error'
+      if (code >= 500) {
+        ctx.log.error(error)
       }
       ctx.throw(code, msg)
     }
+    if (ctx.status === 404) ctx.throw(404, 'Not Found')
   }
 }

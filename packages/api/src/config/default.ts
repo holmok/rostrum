@@ -3,6 +3,7 @@ import { Knex } from 'knex'
 import PG from 'pg'
 import { knexSnakeCaseMappers } from 'objection'
 
+export const pwSalt: string = 'jygxnkxjhooeqbwwsqxcmquyqsahvwou'
 export interface ServerOptions {
   host: string
   port: number

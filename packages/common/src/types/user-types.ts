@@ -31,7 +31,8 @@ export interface UserUpdateRequest {
   id: number
   email?: string
   username?: string
-  password?: string
+  newPassword?: string
+  oldPassword?: string
   created?: Date
   updated?: Date
   lastLogin?: Date
@@ -44,3 +45,11 @@ export interface UserRegisterRequest {
   username: string
   password: string
 }
+
+export interface UserTokenResponse {
+  token: string
+}
+
+export type UserResponse = User
+
+export type UserListResponse = User[]

@@ -25,8 +25,7 @@ export default function ErrorHandler (validation: {
 
       ctx.state.validated = { query: q.value, params: p.value, body: b.value }
     } catch (error: any) {
-      ctx.log.error(error)
-      ctx.throw(400, `Bad request: ${error.message as string}`)
+      throw new Error(`400:${error?.message as string ?? 'Bad Request'}`)
     }
     await next()
   }

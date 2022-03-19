@@ -7,12 +7,14 @@ import Crypto from 'crypto'
 
 class UserService {
   private readonly jwtSecret: string
+  private readonly pwSalt: string
   constructor (
     private readonly data: UserData,
     config: IConfig,
     private readonly logger: Logger
   ) {
     this.jwtSecret = config.get('jwtSecret')
+    this.pwSalt = config.get('pwSalt')
   }
 
   private formatError (error: any): Error {
@@ -24,6 +26,10 @@ class UserService {
       this.logger.warn(error)
       return new Error('400:Username already exists')
     }
+    const parts = /^([1-5][0-9]{2}):(.*)$/g.exec(error.message) ?? []
+    if (parts.length === 3) {
+      return new Error(`${parts[1]}:${parts[2]}`)
+    }
     this.logger.error(error)
     return new Error('500:Failed to create user')
   }
@@ -31,7 +37,7 @@ class UserService {
   private hashPassword (password?: string): string | undefined {
     if (password == null) return undefined
     const hash = Crypto.createHash('sha512')
-    hash.update(password)
+    hash.update(`${password}_${this.pwSalt}`)
     return hash.digest('hex')
   }
 
@@ -83,20 +89,27 @@ class UserService {
 
   async getByLogin (email: string, password: string): Promise<User | undefined> {
     const row = await this.data.getByLogin(email, this.hashPassword(password) as string)
-    return this.fromDataRow(row)
+    const user = this.fromDataRow(row)
+    if (user != null) await this.update({ id: user.id, lastLogin: new Date() })
+    return user
   }
 
   async update (user: UserUpdateRequest): Promise<User | undefined> {
     try {
       const oldUser = await this.getById(user.id)
       if (oldUser == null) return undefined
+      const { newPassword, oldPassword } = user
+      delete user.newPassword
+      delete user.oldPassword
       const update: UserDataRow = {
         ...oldUser,
         ...user,
         updated: new Date()
       }
-      if (user.password != null) {
-        update.passwordHash = this.hashPassword(user.password)
+      if (newPassword != null && oldPassword != null) {
+        const isValid = await this.getByLogin(oldUser.email, oldPassword)
+        if (isValid == null) throw new Error('400:Invalid password')
+        update.passwordHash = this.hashPassword(newPassword)
       }
       const row = await this.data.update(update)
       return this.fromDataRow(row) as User
