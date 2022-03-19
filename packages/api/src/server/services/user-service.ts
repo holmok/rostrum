@@ -15,6 +15,19 @@ class UserService {
     this.jwtSecret = config.get('jwtSecret')
   }
 
+  private formatError (error: any): Error {
+    if (error.constraint === 'users_email_key') {
+      this.logger.warn(error)
+      return new Error('400:Email already exists')
+    }
+    if (error.constraint === 'users_username_key') {
+      this.logger.warn(error)
+      return new Error('400:Username already exists')
+    }
+    this.logger.error(error)
+    return new Error('500:Failed to create user')
+  }
+
   private hashPassword (password?: string): string | undefined {
     if (password == null) return undefined
     const hash = Crypto.createHash('sha512')
@@ -44,16 +57,7 @@ class UserService {
       })
       return this.fromDataRow(row) as User
     } catch (error: any) {
-      if (error.constraint === 'users_email_key') {
-        this.logger.warn(error)
-        throw new Error('400:Email already exists')
-      }
-      if (error.constraint === 'users_username_key') {
-        this.logger.warn(error)
-        throw new Error('400:Username already exists')
-      }
-      this.logger.error(error)
-      throw new Error('500:Failed to create user')
+      throw this.formatError(error)
     }
   }
 
@@ -83,18 +87,22 @@ class UserService {
   }
 
   async update (user: UserUpdateRequest): Promise<User | undefined> {
-    const oldUser = await this.getById(user.id)
-    if (oldUser == null) return undefined
-    const update: UserDataRow = {
-      ...oldUser,
-      ...user,
-      updated: new Date()
+    try {
+      const oldUser = await this.getById(user.id)
+      if (oldUser == null) return undefined
+      const update: UserDataRow = {
+        ...oldUser,
+        ...user,
+        updated: new Date()
+      }
+      if (user.password != null) {
+        update.passwordHash = this.hashPassword(user.password)
+      }
+      const row = await this.data.update(update)
+      return this.fromDataRow(row) as User
+    } catch (error: any) {
+      throw this.formatError(error)
     }
-    if (user.password != null) {
-      update.passwordHash = this.hashPassword(user.password)
-    }
-    const row = await this.data.update(update)
-    return this.fromDataRow(row) as User
   }
 
   tokenize (user?: User): string | undefined {
