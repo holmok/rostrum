@@ -3,7 +3,7 @@ import KoaRouter from '@koa/router'
 import { ServerContext } from '../index'
 import ValidationHandler from '../middleware/validation-handler'
 import Joi from 'joi'
-import { EchoRequest } from '@rostrum/common'
+import { EchoRequest } from '@ninebyme/common'
 
 const publicRouter = new KoaRouter()
 

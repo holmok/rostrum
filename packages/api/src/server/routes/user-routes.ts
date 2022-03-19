@@ -1,6 +1,6 @@
 import KoaRouter from '@koa/router'
 import Joi from 'joi'
-import { ORDER, Page, UserStatus, UserType } from '../data/user-data'
+import { SortOrder, Page, UserStatus, UserType } from '@ninebyme/common'
 import { ServerContext } from '../index'
 import ValidationHandler from '../middleware/validation-handler'
 
@@ -76,7 +76,7 @@ async function getUsers (ctx: ServerContext): Promise<void> {
       offset: parseInt(offset as string ?? '0', 10),
       limit: parseInt(limit as string ?? '10', 10),
       sortBy: sortBy as string ?? 'id',
-      order: (order as string ?? 'desc') as ORDER
+      order: (order as string ?? 'desc') as SortOrder
     }
     const service = ctx.state.services.users()
     const users = await service.list(page)

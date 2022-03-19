@@ -1,29 +1,6 @@
 import { Logger } from 'pino'
 import { Knex } from 'knex'
-
-export enum ORDER {
-  ASC = 'asc',
-  DESC = 'desc'
-}
-
-export interface Page {
-  offset: number
-  limit: number
-  sortBy: string
-  order: ORDER
-}
-
-export enum UserType {
-  ADMIN = 'admin',
-  USER = 'user',
-  EDITOR = 'editor',
-}
-
-export enum UserStatus {
-  ACTIVE = 'active',
-  DISABLED = 'disabled',
-  DELETED = 'deleted',
-}
+import { UserType, UserStatus, Page } from '@ninebyme/common'
 
 export interface UserDataRow {
   id?: number

@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
-import { Clients, InitClients } from '@rostrum/common'
+import { Clients, InitClients } from '@ninebyme/common'
 
 import 'milligram/dist/milligram.min.css'
 import '../styles/layout.css'

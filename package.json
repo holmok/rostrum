@@ -1,5 +1,5 @@
 {
-  "name": "rostrum",
+  "name": "ninebyme",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -24,9 +24,9 @@
     "start:web": "cd packages/web && yarn start",
     "dev": "yarn build:common && concurrently --kill-others \"yarn dev:api\" \"yarn dev:web\" ",
     "build": "lerna run build",
-    "build:api": "lerna run build --scope=@rostrum/api",
-    "build:common": "lerna run build --scope=@rostrum/common",
-    "build:web": "lerna run build --scope=@rostrum/web",
+    "build:api": "lerna run build --scope=@ninebyme/api",
+    "build:common": "lerna run build --scope=@ninebyme/common",
+    "build:web": "lerna run build --scope=@ninebyme/web",
     "bootstrap": "lerna bootstrap",
     "rebuild": "lerna clean -y && lerna bootstrap && lerna run build"
   },

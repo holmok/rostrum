@@ -10,7 +10,7 @@ export interface ServerOptions {
 
 export const jwtSecret = process.env.JWT_SECRET ?? 'zOpENiUTLm7noaTHWlbDLVkWabkeEWFja2Z3j4lAR22OVbm2NzKRdQmCF0AF'
 
-export const name: string = 'Rostrum'
+export const name: string = 'ninebyme'
 
 export const environment = process.env.NODE_ENV ?? 'development'
 
@@ -29,16 +29,16 @@ export const knex: Knex.Config = {
   client: 'postgres',
   connection: {
     host: process.env.PG_HOST ?? 'localhost',
-    database: process.env.PG_DATABASE ?? 'rostrum',
-    password: process.env.PG_PASSWORD ?? 'rostrum',
-    user: process.env.PG_USER ?? 'rostrum',
+    database: process.env.PG_DATABASE ?? 'ninebyme',
+    password: process.env.PG_PASSWORD ?? 'ninebyme',
+    user: process.env.PG_USER ?? 'ninebyme',
     port: parseInt(process.env.PG_PORT ?? '5432', 10)
   },
   pool: {
     min: 0,
     max: 7,
     afterCreate: function (conn: PG.PoolClient, done: (err: Error | undefined, conn: PG.PoolClient) => void) {
-      const schema = process.env.PG_SCHEMA ?? 'rostrum'
+      const schema = process.env.PG_SCHEMA ?? 'ninebyme'
       conn.query(
         `SET search_path TO ${schema}, public;`,
         (err: Error | undefined) => {

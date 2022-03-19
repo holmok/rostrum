@@ -1,34 +1,9 @@
 import { IConfig } from 'config'
 import { Logger } from 'pino'
-import UserData, { Page, UserDataRow, UserStatus, UserType } from '../data/user-data'
+import UserData, { UserDataRow } from '../data/user-data'
+import { User, UserType, UserStatus, Page, UserRegister, UserUpdate } from '@ninebyme/common'
 import JWT from 'jsonwebtoken'
 import Crypto from 'crypto'
-
-export interface User {
-  id: number
-  email: string
-  username: string
-  type: UserType
-  status: UserStatus
-}
-
-export interface UserUpdate {
-  id: number
-  email?: string
-  username?: string
-  password?: string
-  created?: Date
-  updated?: Date
-  lastLogin?: Date
-  type?: UserType
-  status?: UserStatus
-}
-
-export interface UserRegister {
-  email: string
-  username: string
-  password: string
-}
 
 class UserService {
   private readonly jwtSecret: string

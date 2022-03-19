@@ -1,7 +1,7 @@
 import { IConfig } from 'config'
 import { Logger } from 'pino'
 import OS from 'os'
-import { EchoRequest, EchoResponse } from '@rostrum/common'
+import { EchoRequest, EchoResponse } from '@ninebyme/common'
 import SystemData from '../data/system-data'
 
 class SystemService {
