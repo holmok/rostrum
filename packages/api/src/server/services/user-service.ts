@@ -1,7 +1,7 @@
 import { IConfig } from 'config'
 import { Logger } from 'pino'
 import UserData, { UserDataRow } from '../data/user-data'
-import { User, UserType, UserStatus, Page, UserRegister, UserUpdate } from '@ninebyme/common'
+import { User, UserType, UserStatus, Page, UserRegisterRequest, UserUpdateRequest } from '@ninebyme/common'
 import JWT from 'jsonwebtoken'
 import Crypto from 'crypto'
 
@@ -33,15 +33,28 @@ class UserService {
     }
   }
 
-  async register (user: UserRegister): Promise<User> {
-    const row = await this.data.create({
-      email: user.email,
-      username: user.username,
-      passwordHash: this.hashPassword(user.password),
-      type: UserType.USER,
-      status: UserStatus.ACTIVE
-    })
-    return this.fromDataRow(row) as User
+  async register (user: UserRegisterRequest): Promise<User> {
+    try {
+      const row = await this.data.create({
+        email: user.email,
+        username: user.username,
+        passwordHash: this.hashPassword(user.password),
+        type: UserType.USER,
+        status: UserStatus.ACTIVE
+      })
+      return this.fromDataRow(row) as User
+    } catch (error: any) {
+      if (error.constraint === 'users_email_key') {
+        this.logger.warn(error)
+        throw new Error('400:Email already exists')
+      }
+      if (error.constraint === 'users_username_key') {
+        this.logger.warn(error)
+        throw new Error('400:Username already exists')
+      }
+      this.logger.error(error)
+      throw new Error('500:Failed to create user')
+    }
   }
 
   async list (page: Page): Promise<User[]> {
@@ -69,7 +82,7 @@ class UserService {
     return this.fromDataRow(row)
   }
 
-  async update (user: UserUpdate): Promise<User | undefined> {
+  async update (user: UserUpdateRequest): Promise<User | undefined> {
     const oldUser = await this.getById(user.id)
     if (oldUser == null) return undefined
     const update: UserDataRow = {

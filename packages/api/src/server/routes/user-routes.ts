@@ -1,57 +1,74 @@
 import KoaRouter from '@koa/router'
 import Joi from 'joi'
-import { SortOrder, Page, UserStatus, UserType } from '@ninebyme/common'
+import { SortOrder, Page, UserRegisterRequest, UserUpdateRequest, UserType, UserStatus } from '@ninebyme/common'
 import { ServerContext } from '../index'
 import ValidationHandler from '../middleware/validation-handler'
 
 const publicRouter = new KoaRouter()
 
-export interface RegisterUserRequest {
-  email: string
-  username: string
-  password: string
+const postUserValid = {
+  body: Joi.object({
+    email: Joi.string().email().required(),
+    username: Joi.string().required(),
+    password: Joi.string().required().min(8)
+  })
 }
 
-export interface UpdateUserRequest {
-  id: number
-  email?: string
-  username?: string
-  password?: string
-  created?: Date
-  updated?: Date
-  lastLogin?: Date
-  type?: UserType
-  status?: UserStatus
+const putUserJoiValid = {
+  params: Joi.object({
+    id: Joi.number().integer().required()
+  }),
+  body: Joi.object({
+    id: Joi.number().integer().required(),
+    email: Joi.string().email().optional(),
+    username: Joi.string().optional(),
+    password: Joi.string().optional().min(8),
+    type: Joi.string().optional().valid(UserType.ADMIN, UserType.EDITOR, UserType.USER),
+    status: Joi.string().optional().valid(UserStatus.ACTIVE, UserStatus.DISABLED, UserStatus.DELETED)
+  })
+}
+const postUserLoginValid = {
+  body: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required().min(8)
+  })
+}
+
+const getUsersValid = {
+  query: Joi.object({
+    email: Joi.string().email().optional(),
+    username: Joi.string().optional(),
+    offset: Joi.number().integer().min(0).optional().default(0),
+    limit: Joi.number().integer().min(1).optional().default(10),
+    sortBy: Joi.string().optional().default('id'),
+    order: Joi.string().valid(SortOrder.ASC, SortOrder.DESC).optional().default(SortOrder.DESC)
+  })
+}
+
+const getUserValid = {
+  params: Joi.object({
+    id: Joi.number().integer().required()
+  })
 }
 
 export default publicRouter
-  .post('/users', ValidationHandler({
-    body: Joi.object({
-      email: Joi.string().email().required(),
-      username: Joi.string().required(),
-      password: Joi.string().required().min(8)
-    })
-  }), postUser)
-  .put('/users/:id', putUser)
-  .get('/users/:id', ValidationHandler({
-    params: Joi.object({
-      id: Joi.number().integer().required()
-    })
-  }), getUser)
-  .get('/users', getUsers)
-  .post('/users/login', postUserLogin)
+  .post('/users', ValidationHandler(postUserValid), postUser)
+  .put('/users/:id', ValidationHandler(putUserJoiValid), putUser)
+  .get('/users/:id', ValidationHandler(getUserValid), getUser)
+  .get('/users', ValidationHandler(getUsersValid), getUsers)
+  .post('/users/login', ValidationHandler(postUserLoginValid), postUserLogin)
 
 async function postUser (ctx: ServerContext): Promise<void> {
   const service = ctx.state.services.users()
-  const request: RegisterUserRequest = ctx.state.validated.body
+  const request: UserRegisterRequest = ctx.state.validated.body
   const user = await service.register(request)
   ctx.body = user
 }
 
 async function putUser (ctx: ServerContext): Promise<void> {
   const service = ctx.state.services.users()
-  const id = parseInt(ctx.params.id)
-  const request: UpdateUserRequest = ctx.request.body
+  const id = ctx.state.validated.params.id
+  const request: UserUpdateRequest = ctx.state.validated.body
   if (id !== request.id) {
     ctx.throw(400, 'id mismatch')
   }
@@ -60,25 +77,21 @@ async function putUser (ctx: ServerContext): Promise<void> {
 }
 
 async function getUsers (ctx: ServerContext): Promise<void> {
-  if (ctx.request.query.email != null) {
-    const { email } = ctx.request.query
+  const { email, username, offset, limit, sortBy, order } = ctx.state.validated.query
+  if (email != null) {
     const service = ctx.state.services.users()
     const user = await service.getByEmail(email as string)
+    if (user == null) ctx.throw(404, 'user not found')
     ctx.body = user
-  } else if (ctx.request.query.username != null) {
+  } else if (username != null) {
     const { username } = ctx.request.query
     const service = ctx.state.services.users()
     const user = await service.getByUsername(username as string)
+    if (user == null) ctx.throw(404, 'user not found')
     ctx.body = user
   } else {
-    const { offset, limit, sortBy, order } = ctx.request.query
-    const page: Page = {
-      offset: parseInt(offset as string ?? '0', 10),
-      limit: parseInt(limit as string ?? '10', 10),
-      sortBy: sortBy as string ?? 'id',
-      order: (order as string ?? 'desc') as SortOrder
-    }
     const service = ctx.state.services.users()
+    const page: Page = { offset, limit, sortBy, order: order }
     const users = await service.list(page)
     ctx.body = users
   }
@@ -93,7 +106,7 @@ async function getUser (ctx: ServerContext): Promise<void> {
 
 async function postUserLogin (ctx: ServerContext): Promise<void> {
   const service = ctx.state.services.users()
-  const request: { email: string, password: string } = ctx.request.body
+  const request: { email: string, password: string } = ctx.state.validated.body
   const user = await service.getByLogin(request.email, request.password)
   ctx.body = { token: service.tokenize(user) }
 }

@@ -10,13 +10,17 @@ export default function ErrorHandler (): Middleware<ServerContextState, ServerCo
         ctx.throw(404, 'Not Found')
       }
     } catch (error: any) {
-      ctx.log.error(error)
-      ctx.status = error.statusCode ?? error.status ?? 500 // default 500 to unhandled server error?
+      let code = 500
+      let msg = 'Internal Server Error'
       if (ctx.status === 401) {
-        ctx.throw(401, 'Unauthorized')
+        msg = 'Unauthorized'
+        code = 401
       } else {
-        ctx.throw(ctx.status, error.message)
+        const parts = /^([1-5][0-9]{2}):(.*)$/g.exec(error.message) ?? []
+        code = parts[1] != null ? parseInt(parts[1], 10) : code
+        msg = parts[2] ?? msg
       }
+      ctx.throw(code, msg)
     }
   }
 }

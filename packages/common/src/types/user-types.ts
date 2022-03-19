@@ -27,7 +27,7 @@ export interface User {
   status: UserStatus
 }
 
-export interface UserUpdate {
+export interface UserUpdateRequest {
   id: number
   email?: string
   username?: string
@@ -39,7 +39,7 @@ export interface UserUpdate {
   status?: UserStatus
 }
 
-export interface UserRegister {
+export interface UserRegisterRequest {
   email: string
   username: string
   password: string

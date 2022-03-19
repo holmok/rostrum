@@ -7,14 +7,14 @@ import { EchoRequest } from '@ninebyme/common'
 
 const publicRouter = new KoaRouter()
 
+const getEchoJoi = Joi.object({
+  message: Joi.string().required()
+})
+
 export default publicRouter
   .get('/ok', getOk)
   .get('/ready', getReady)
-  .get('/echo', ValidationHandler({
-    query: Joi.object({
-      message: Joi.string().required()
-    })
-  }), getEcho)
+  .get('/echo', ValidationHandler({ query: getEchoJoi }), getEcho)
 
 async function getOk (ctx: ServerContext): Promise<void> {
   ctx.body = { status: 'ok' }
