@@ -3,6 +3,7 @@ import Joi from 'joi'
 import { UserResponse, UserListResponse, UserTokenResponse, SortOrder, Page, UserRegisterRequest, UserUpdateRequest, UserType, UserStatus } from '@ninebyme/common'
 import { ServerContext } from '../index'
 import ValidationHandler from '../middleware/validation-handler'
+import AuthHandler from '../middleware/auth-handler'
 
 const publicRouter = new KoaRouter()
 
@@ -54,9 +55,9 @@ const getUserValid = {
 
 export default publicRouter
   .post('/users', ValidationHandler(postUserValid), postUser)
-  .put('/users/:id', ValidationHandler(putUserJoiValid), putUser)
-  .get('/users/:id', ValidationHandler(getUserValid), getUser)
-  .get('/users', ValidationHandler(getUsersValid), getUsers)
+  .put('/users/:id', AuthHandler.authorize(), ValidationHandler(putUserJoiValid), putUser)
+  .get('/users/:id', AuthHandler.authorize(), ValidationHandler(getUserValid), getUser)
+  .get('/users', AuthHandler.authorize(), ValidationHandler(getUsersValid), getUsers)
   .post('/users/login', ValidationHandler(postUserLoginValid), postUserLogin)
 
 async function postUser (ctx: ServerContext): Promise<void> {
@@ -69,6 +70,7 @@ async function postUser (ctx: ServerContext): Promise<void> {
 async function putUser (ctx: ServerContext): Promise<void> {
   const service = ctx.state.services.users()
   const id = ctx.state.validated.params.id
+  if (id !== ctx.state.user?.id && ctx.state.user?.type !== UserType.ADMIN) throw new Error('403:Forbidden')
   const request: UserUpdateRequest = ctx.state.validated.body
   if (id !== request.id) {
     throw new Error('400:User id param does not match request body id')
@@ -93,6 +95,7 @@ async function getUsers (ctx: ServerContext): Promise<void> {
     if (user == null) throw new Error('404:User not found')
     ctx.body = user
   } else {
+    if (ctx.state.user?.type !== UserType.ADMIN) throw new Error('403:Forbidden')
     const service = ctx.state.services.users()
     const page: Page = { offset, limit, sortBy, order: order }
     const users: UserListResponse = await service.list(page)

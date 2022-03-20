@@ -9,6 +9,8 @@ import { ServerOptions } from '../config/default'
 import KoaLogger from 'koa-pino-logger'
 import KoaBodyParser from 'koa-bodyparser'
 import ErrorHandler from './middleware/error-handler'
+import AuthHandler from './middleware/auth-handler'
+import { User } from '@ninebyme/common'
 
 export type ServerContextState = Koa.DefaultState & {
   config: Config.IConfig
@@ -18,6 +20,7 @@ export type ServerContextState = Koa.DefaultState & {
   dev: boolean
   host: string
   services: ServiceList
+  user?: User
 }
 
 export type ServerContext = Koa.ParameterizedContext<ServerContextState>
@@ -63,6 +66,7 @@ class Server {
     this.logger.info('%s server starting.', name)
 
     this.app.use(KoaLogger({ logger: this.logger }))
+
     // Cors
     this.logger.debug('Setting error handler.')
     this.app.use(ErrorHandler())
@@ -82,6 +86,10 @@ class Server {
       ctx.state.services = services
       await next()
     })
+
+    // Authentication
+    this.logger.debug('Setting authentication handler.')
+    this.app.use(AuthHandler.authenticate())
 
     // Cors
     this.logger.debug('Setting up cors.')

@@ -120,7 +120,7 @@ class UserService {
 
   tokenize (user?: User): string | undefined {
     if (user == null) return undefined
-    return JWT.sign(user, this.jwtSecret)
+    return JWT.sign(user, this.jwtSecret, { expiresIn: '1d' })
   }
 
   validateToken (token?: string): User | undefined {
