@@ -26,7 +26,7 @@ class LocalStorage implements Storage {
 export const localStorage = new LocalStorage()
 
 const clients = InitClients('http://localhost:3001', localStorage)
-clients.setToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzgsImVtYWlsIjoiY2hyaXN0b3BoZXJAaG9sbW9rLmNvbSIsInVzZXJuYW1lIjoiQ2hyaXN0b3BoZXIgSG9sbW9rIiwidHlwZSI6ImFkbWluIiwic3RhdHVzIjoiYWN0aXZlIiwiaWF0IjoxNjQ3Nzk1MTc2LCJleHAiOjE2NDc4ODE1NzZ9.ATp3bbW9Ji4i5SVrxNd0Yg_GIvRgdgqX2aYwELzykpI')
+
 export function getClients (): Clients {
   return clients
 }
