@@ -84,13 +84,13 @@ async function getUsers (ctx: ServerContext): Promise<void> {
   if (email != null) {
     const service = ctx.state.services.users()
     const user: UserResponse | undefined = await service.getByEmail(email as string)
-    if (user == null) ctx.throw(404, 'user not found')
+    if (user == null) throw new Error('404:User not found')
     ctx.body = user
   } else if (username != null) {
     const { username } = ctx.request.query
     const service = ctx.state.services.users()
     const user: UserResponse | undefined = await service.getByUsername(username as string)
-    if (user == null) ctx.throw(404, 'user not found')
+    if (user == null) throw new Error('404:User not found')
     ctx.body = user
   } else {
     const service = ctx.state.services.users()
