@@ -1,9 +1,7 @@
-html {
-  background-color: black;
-}
 
 body {
   background-color: white;
+  color: black;
   padding-top: 6rem;
   padding-bottom: 6rem;
 }

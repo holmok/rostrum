@@ -54,11 +54,17 @@ const getUserValid = {
 }
 
 export default publicRouter
+  .get('/users/me', getMe)
   .post('/users', ValidationHandler(postUserValid), postUser)
   .put('/users/:id', AuthHandler.authorize(), ValidationHandler(putUserJoiValid), putUser)
   .get('/users/:id', AuthHandler.authorize(), ValidationHandler(getUserValid), getUser)
   .get('/users', AuthHandler.authorize(), ValidationHandler(getUsersValid), getUsers)
   .post('/users/login', ValidationHandler(postUserLoginValid), postUserLogin)
+
+async function getMe (ctx: ServerContext): Promise<void> {
+  const user = ctx.state.user
+  ctx.body = user
+}
 
 async function postUser (ctx: ServerContext): Promise<void> {
   const service = ctx.state.services.users()

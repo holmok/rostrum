@@ -1,5 +1,7 @@
 footer {
-    background-color: black;
+    background-color: white;
+    border: 0;
+    border-top: 1px solid black;
     position: fixed;
     width: 100%;
     bottom: 0;
@@ -7,8 +9,4 @@ footer {
     height: 5rem;
     line-height: 5rem;
     z-index: 999;
-}
-
-footer * {
-    color: white;
 }

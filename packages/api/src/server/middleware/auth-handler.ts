@@ -5,7 +5,7 @@ function AuthenticationHandler (): Middleware<ServerContextState, ServerContext>
   return async (ctx: ServerContext, next: Next) => {
     const authHeader = ctx.request.header.authorization
     if (authHeader != null) {
-      const [_, bearer, token] = /^(Bearer) ([a-zA-Z0-9=+/.-]+)$/.exec(authHeader) ?? []
+      const [_, bearer, token] = /^(Bearer) (.+)$/.exec(authHeader) ?? []
       if (_ != null && bearer != null && token != null) {
         const service = ctx.state.services.users()
         const user = service.validateToken(token)

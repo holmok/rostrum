@@ -1,7 +1,7 @@
 /* FDF5DF #5EBEC4 #F92C85 */
 
 header {
-  background: black;
+  background: white;
   position: fixed;
   width: 100%;
   top: 0;
@@ -9,11 +9,13 @@ header {
   height: 5rem;
   line-height: 5rem;
   z-index: 999;
+  border:0;
+  border-bottom: 1px solid black;
 }
 
 
 header * {
-  color: white;
+  color: black;
 }
 
 header .logo {
@@ -31,18 +33,23 @@ header .hamburger {
 }
 
 #navigation>ul {
+  background-color: white;
+  border: 0;
+  border-bottom: 1px solid black;
   margin: 0;
   padding: 0;
-  background-color: #333;
   width: 100%;
   position: absolute;
   right: 0;
-  top: -0.2rem;
+  top: -0.1rem;
 }
 
 @media only screen and (min-width: 720px) {
   #navigation>ul {
     width: auto;
+    border: 1px solid black;
+    border-top: 0;
+    right: 2rem
   }
 }
 
@@ -64,7 +71,7 @@ header .hamburger {
 }
 
 #navigation>ul>li>a:hover {
-  background-color: #666;
+  background-color: black;
   color: white;
 }
 
@@ -74,7 +81,7 @@ span.logo {
   top: -0.05rem;
   left: 1.5rem;
   font-weight: 900;
-  color: white;
+  color: black;
   display: inline-block;
   overflow: hidden;
 }
