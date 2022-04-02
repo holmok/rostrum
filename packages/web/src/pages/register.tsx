@@ -16,6 +16,8 @@ export default function Page (): ReactElement {
   const [passwordValid, setPasswordValid] = useState< boolean | undefined >(undefined)
   const [serverError, setServerError] = useState< string | undefined >(undefined)
 
+  const [success, setSuccess] = useState< boolean >(false)
+
   const [valid, setValid] = useState(false)
 
   const users = getClients().users()
@@ -82,66 +84,71 @@ export default function Page (): ReactElement {
     if (emailValid === true && usernameValid === true && passwordValid === true) {
       console.log({ email, username, password })
       try {
-        const user = await users.register({ email, username, password })
-        console.log(user)
+        await users.register({ email, username, password })
+        setSuccess(true)
       } catch (e: any) {
         const { response } = e
         if (response?.data != null) {
           setServerError(response.data)
         }
-      } finally {
-        setTimeout(() => {
-          setValid(true)
-        }, 3000)
+        setValid(true)
       }
     }
   }
 
-  return (
-    <>
-      <Head>
-        <title>Register</title>
-      </Head>
-      <h1>Register</h1>
-      <p>Create a free account to get started.</p>
-      {serverError != null && <p className='error-server'>{serverError}</p>}
-      <form onSubmit={handleSubmit}>
-        <fieldset>
-          <label htmlFor='email'>Email</label>
-          <input
-            type='text' placeholder='Your email address...'
-            id='email'
-            value={email}
-            onBlur={onEmailBlur}
-            onChange={onEmailChange}
-          />
-          {!(emailValid == null ? true : emailValid) && <p className='error'>Please enter a valid email address.</p>}
-          <label htmlFor='username'>User Name</label>
-          <input
-            type='text'
-            placeholder='Your public user name...'
-            id='username'
-            value={username}
-            onBlur={onUsernameBlur}
-            onChange={onUsernameChange}
-          />
-          {!(usernameValid == null ? true : usernameValid) && <p className='error'>Please enter a valid user name (at least 3 characters).</p>}
-          <label htmlFor='password'>Password</label>
-          <input
-            type='text'
-            placeholder='Your password...'
-            id='password'
-            value={password}
-            onBlur={onPasswordBlur}
-            onChange={onPasswordChange}
-          />
-          {!(passwordValid == null ? true : passwordValid) && <p className='error'>Please enter a valid password (at least 8 character).</p>}
-          <input disabled={!valid} type='submit' value='Register' />
+  if (success) {
+    return (
+      <>
+        <p>User created.</p>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <Head>
+          <title>Register</title>
+        </Head>
+        <h1>Register</h1>
+        <p>Create a free account to get started.</p>
+        {serverError != null && <p className='error-server'>{serverError}</p>}
+        <form onSubmit={handleSubmit}>
+          <fieldset>
+            <label htmlFor='email'>Email</label>
+            <input
+              type='email' placeholder='Your email address...'
+              id='email'
+              value={email}
+              onBlur={onEmailBlur}
+              onChange={onEmailChange}
+            />
+            {!(emailValid == null ? true : emailValid) && <p className='error'>Please enter a valid email address.</p>}
+            <label htmlFor='username'>User Name</label>
+            <input
+              type='text'
+              placeholder='Your public user name...'
+              id='username'
+              value={username}
+              onBlur={onUsernameBlur}
+              onChange={onUsernameChange}
+            />
+            {!(usernameValid == null ? true : usernameValid) && <p className='error'>Please enter a valid user name (at least 3 characters).</p>}
+            <label htmlFor='password'>Password</label>
+            <input
+              type='password'
+              placeholder='Your password...'
+              id='password'
+              value={password}
+              onBlur={onPasswordBlur}
+              onChange={onPasswordChange}
+            />
+            {!(passwordValid == null ? true : passwordValid) && <p className='error'>Please enter a valid password (at least 8 character).</p>}
+            <input disabled={!valid} type='submit' value='Register' />
 
-        </fieldset>
-      </form>
-    </>
-  )
+          </fieldset>
+        </form>
+      </>
+    )
+  }
 }
 
 Page.getLayout = (page: ReactElement) => {
