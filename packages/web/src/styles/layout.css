@@ -1,4 +1,3 @@
-
 body {
   background-color: white;
   color: black;
@@ -11,4 +10,16 @@ body {
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-between;
+}
+
+.error-server {
+  color: white;
+  background-color: red;
+  padding: 0.5rem 1rem;
+  font-weight: 900;
+}
+
+.error {
+  color: red;
+  font-weight: 900;
 }

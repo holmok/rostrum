@@ -4,8 +4,8 @@ import { UserStatus, UserType, SortOrder } from '@ninebyme/common'
 export const postUser = {
   body: Joi.object({
     email: Joi.string().email().required(),
-    username: Joi.string().required(),
-    password: Joi.string().required().min(8)
+    username: Joi.string().required().min(3).max(256),
+    password: Joi.string().required().min(8).max(256)
   })
 }
 

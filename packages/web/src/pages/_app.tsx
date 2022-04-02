@@ -25,7 +25,7 @@ class LocalStorage implements Storage {
 
 export const localStorage = new LocalStorage()
 
-const clients = InitClients('http://127.0.0.1:3001', localStorage)
+const clients = InitClients('/api', localStorage)
 
 export function getClients (): Clients {
   return clients

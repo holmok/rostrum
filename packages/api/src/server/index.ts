@@ -93,8 +93,9 @@ class Server {
 
     // Cors
     this.logger.debug('Setting up cors.')
-    this.app.use(Cors(this.config.get('cors')))
-    this.logger.debug(`Cors setup complete (${JSON.stringify(this.config.get('cors'))}).`)
+    const corsOptions: Cors.Options = this.config.get('cors')
+    this.app.use(Cors(corsOptions))
+    this.logger.debug(`Cors setup complete (${JSON.stringify(corsOptions, null, 2)}.`)
 
     // Body Parser
     this.logger.debug('Setting up body parser.')

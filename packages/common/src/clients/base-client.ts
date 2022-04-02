@@ -1,4 +1,4 @@
-import { AxiosInstance, Method } from 'axios'
+import { AxiosInstance, Method, AxiosResponse } from 'axios'
 import { Storage } from '.'
 
 export interface Request{
@@ -20,8 +20,15 @@ abstract class BaseClient {
     if (token != null) {
       headers.Authorization = `Bearer ${token}`
     }
-    const response = await this.axios.request<T>({ url, data, params, headers, method: method ?? 'GET' })
-    return response.data
+    let response: AxiosResponse<T, any> | undefined
+    try {
+      response = await this.axios.request<T>({ url, data, params, headers, method: method ?? 'GET' })
+      return response.data
+    } catch (e: any) {
+      // console.log(response?.data, response?.status, response?.statusText)
+      console.log(e.response)
+      throw e
+    }
   }
 }
 
