@@ -8,8 +8,7 @@ import Services, { ServiceList } from './services'
 import { ServerOptions } from '../config/default'
 import KoaLogger from 'koa-pino-logger'
 import KoaBodyParser from 'koa-bodyparser'
-import ErrorHandler from './middleware/error-handler'
-import AuthHandler from './middleware/auth-handler'
+import { ErrorHandler, AuthHandlers } from './middleware'
 import { User } from '@ninebyme/common'
 
 export type ServerContextState = Koa.DefaultState & {
@@ -42,7 +41,6 @@ export async function start (): Promise<void> {
 async function stop (server: Server): Promise<void> {
   try {
     await server.stop()
-    console.warn('server stopped')
   } catch (error) {
     console.error('failed to stop server')
     throw error
@@ -51,6 +49,7 @@ async function stop (server: Server): Promise<void> {
 
 class Server {
   private readonly app: Koa<ServerContextState, ServerContext>
+  private readonly services: ServiceList
   server: Http.Server | undefined
   stopping: boolean
 
@@ -59,6 +58,7 @@ class Server {
     this.app = new Koa()
     this.stopping = false
     this.server = undefined
+    this.services = Services(config, logger)
   }
 
   async start (): Promise<void> {
@@ -76,24 +76,25 @@ class Server {
 
     // set up server context/state for request/response
     this.logger.debug('Setting up server context.')
-    const services = Services(this.config, this.logger)
+
     this.app.use(async (ctx: ServerContext, next) => {
       ctx.state.config = this.config
       ctx.state.name = this.config.get('name')
       ctx.state.environment = this.config.get('environment')
       ctx.state.host = host
       ctx.state.dev = this.config.get('environment') !== 'production'
-      ctx.state.services = services
+      ctx.state.services = this.services
       await next()
     })
 
     // Authentication
     this.logger.debug('Setting authentication handler.')
-    this.app.use(AuthHandler.authenticate())
+    this.app.use(AuthHandlers.authenticate())
 
     // Cors
     this.logger.debug('Setting up cors.')
-    this.app.use(Cors())
+    this.app.use(Cors(this.config.get('cors')))
+    this.logger.debug(`Cors setup complete (${JSON.stringify(this.config.get('cors'))}).`)
 
     // Body Parser
     this.logger.debug('Setting up body parser.')
@@ -114,19 +115,26 @@ class Server {
 
   // graceful shutdown
   async stop (): Promise<void> {
-    this.logger.info('Server stopping.')
+    this.logger.warn('Server stop called.')
     if (!this.stopping) {
       this.stopping = true
       return await new Promise((resolve, reject) => {
         if (this.server == null) {
           reject(new Error('no server to stop.'))
         } else {
+          // first stop the server
+          this.logger.warn('Stopping server...')
           this.server.close((err) => {
             if (err != null) {
               reject(err)
             } else {
-              this.logger.info('Server stopped.')
-              resolve()
+              this.logger.warn('...Server stopped.')
+              this.logger.warn('Stopping services...')
+              // then stop the services
+              this.services.shutdown().then(() => {
+                this.logger.warn('...Services stopped.')
+                resolve()
+              }).catch(reject)
             }
           })
         }

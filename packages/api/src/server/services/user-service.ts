@@ -1,7 +1,7 @@
 import { IConfig } from 'config'
 import { Logger } from 'pino'
 import UserData, { UserDataRow } from '../data/user-data'
-import { User, UserType, UserStatus, Page, UserRegisterRequest, UserUpdateRequest } from '@ninebyme/common'
+import { User, UserType, UserStatus, Pager, UserRegisterRequest, UserUpdateRequest } from '@ninebyme/common'
 import JWT from 'jsonwebtoken'
 import Crypto from 'crypto'
 
@@ -67,8 +67,8 @@ class UserService {
     }
   }
 
-  async list (page: Page): Promise<User[]> {
-    const rows = await this.data.list(page)
+  async list (pager: Pager): Promise<User[]> {
+    const rows = await this.data.list(pager)
     return rows.map(this.fromDataRow) as User[]
   }
 

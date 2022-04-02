@@ -1,5 +1,6 @@
 import { Middleware, Next } from 'koa'
 import { ServerContextState, ServerContext } from '../index'
+import { AllowedAccess } from '@ninebyme/common'
 
 function AuthenticationHandler (): Middleware<ServerContextState, ServerContext> {
   return async (ctx: ServerContext, next: Next) => {
@@ -18,14 +19,7 @@ function AuthenticationHandler (): Middleware<ServerContextState, ServerContext>
   }
 }
 
-export enum AllowedAccess {
-  USER = 'user',
-  ADMIN = 'admin'
-}
-
-function AuthorizationHandler (
-  access: AllowedAccess = AllowedAccess.USER
-): Middleware<ServerContextState, ServerContext> {
+function AuthorizationHandler (access: AllowedAccess = AllowedAccess.USER): Middleware<ServerContextState, ServerContext> {
   return async (ctx: ServerContext, next: Next) => {
     const user = ctx.state.user
     if (user != null) {
@@ -44,7 +38,7 @@ function AuthorizationHandler (
   }
 }
 
-export default {
+export const AuthHandlers = {
   authenticate: AuthenticationHandler,
   authorize: AuthorizationHandler
 }

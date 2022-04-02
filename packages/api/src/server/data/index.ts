@@ -6,6 +6,7 @@ import SystemData from './system-data'
 import UserData from './user-data'
 
 export interface DataList {
+  close: () => Promise<void>
   system: () => SystemData
   users: () => UserData
 }
@@ -16,6 +17,7 @@ export default function Data (config: IConfig, logger: Logger): DataList {
   const system = new SystemData(knex, logger)
   const users = new UserData(knex, logger)
   return {
+    async close () { await knex.destroy() },
     system () { return system },
     users () { return users }
   }

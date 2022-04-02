@@ -1,65 +1,19 @@
 import KoaRouter from '@koa/router'
-import Joi from 'joi'
-import { UserResponse, UserListResponse, UserTokenResponse, SortOrder, Page, UserRegisterRequest, UserUpdateRequest, UserType, UserStatus } from '@ninebyme/common'
+import { UserResponse, UserListResponse, UserTokenResponse, UserRegisterRequest, UserUpdateRequest, UserType, Pager } from '@ninebyme/common'
 import { ServerContext } from '../index'
-import ValidationHandler from '../middleware/validation-handler'
-import AuthHandler from '../middleware/auth-handler'
+import { ValidationHandler, AuthHandlers } from '../middleware'
+
+import * as Valid from './user-validation'
 
 const publicRouter = new KoaRouter()
 
-const postUserValid = {
-  body: Joi.object({
-    email: Joi.string().email().required(),
-    username: Joi.string().required(),
-    password: Joi.string().required().min(8)
-  })
-}
-
-const putUserJoiValid = {
-  params: Joi.object({
-    id: Joi.number().integer().required()
-  }),
-  body: Joi.object({
-    id: Joi.number().integer().required(),
-    email: Joi.string().email().optional(),
-    username: Joi.string().optional(),
-    newPassword: Joi.string().optional().min(8),
-    oldPassword: Joi.string().optional().min(8),
-    type: Joi.string().optional().valid(UserType.ADMIN, UserType.EDITOR, UserType.USER),
-    status: Joi.string().optional().valid(UserStatus.ACTIVE, UserStatus.DISABLED, UserStatus.DELETED)
-  }).with('newPassword', 'oldPassword')
-}
-const postUserLoginValid = {
-  body: Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().required().min(8)
-  })
-}
-
-const getUsersValid = {
-  query: Joi.object({
-    email: Joi.string().email().optional(),
-    username: Joi.string().optional(),
-    offset: Joi.number().integer().min(0).optional().default(0),
-    limit: Joi.number().integer().min(1).optional().default(10),
-    sortBy: Joi.string().optional().default('id'),
-    order: Joi.string().valid(SortOrder.ASC, SortOrder.DESC).optional().default(SortOrder.DESC)
-  })
-}
-
-const getUserValid = {
-  params: Joi.object({
-    id: Joi.number().integer().required()
-  })
-}
-
 export default publicRouter
   .get('/users/me', getMe)
-  .post('/users', ValidationHandler(postUserValid), postUser)
-  .put('/users/:id', AuthHandler.authorize(), ValidationHandler(putUserJoiValid), putUser)
-  .get('/users/:id', AuthHandler.authorize(), ValidationHandler(getUserValid), getUser)
-  .get('/users', AuthHandler.authorize(), ValidationHandler(getUsersValid), getUsers)
-  .post('/users/login', ValidationHandler(postUserLoginValid), postUserLogin)
+  .post('/users', ValidationHandler(Valid.postUser), postUser)
+  .put('/users/:id', AuthHandlers.authorize(), ValidationHandler(Valid.putUser), putUser)
+  .get('/users/:id', AuthHandlers.authorize(), ValidationHandler(Valid.getUser), getUser)
+  .get('/users', AuthHandlers.authorize(), ValidationHandler(Valid.getUsers), getUsers)
+  .post('/users/login', ValidationHandler(Valid.postLogin), postUserLogin)
 
 async function getMe (ctx: ServerContext): Promise<void> {
   const user = ctx.state.user
@@ -103,8 +57,8 @@ async function getUsers (ctx: ServerContext): Promise<void> {
   } else {
     if (ctx.state.user?.type !== UserType.ADMIN) throw new Error('403:Forbidden')
     const service = ctx.state.services.users()
-    const page: Page = { offset, limit, sortBy, order: order }
-    const users: UserListResponse = await service.list(page)
+    const pager: Pager = { offset, limit, sortBy, order: order }
+    const users: UserListResponse = await service.list(pager)
     ctx.body = users
   }
 }

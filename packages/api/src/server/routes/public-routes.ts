@@ -1,20 +1,17 @@
 
 import KoaRouter from '@koa/router'
 import { ServerContext } from '../index'
-import ValidationHandler from '../middleware/validation-handler'
-import Joi from 'joi'
+import { ValidationHandler } from '../middleware'
 import { EchoRequest } from '@ninebyme/common'
 
-const publicRouter = new KoaRouter()
+import * as Valid from './public-validation'
 
-const getEchoJoi = Joi.object({
-  message: Joi.string().required()
-})
+const publicRouter = new KoaRouter()
 
 export default publicRouter
   .get('/ok', getOk)
   .get('/ready', getReady)
-  .get('/echo', ValidationHandler({ query: getEchoJoi }), getEcho)
+  .get('/echo', ValidationHandler({ query: Valid.getEcho }), getEcho)
 
 async function getOk (ctx: ServerContext): Promise<void> {
   ctx.body = { status: 'ok' }

@@ -2,12 +2,13 @@ import Joi from 'joi'
 import { Middleware, Next } from 'koa'
 import { ServerContextState, ServerContext } from '../index'
 
-export default function ErrorHandler (validation: {
+export interface Validation {
   query?: Joi.Schema
   params?: Joi.Schema
   body?: Joi.Schema
 }
-): Middleware<ServerContextState, ServerContext> {
+
+export function ValidationHandler (validation: Validation): Middleware<ServerContextState, ServerContext> {
   return async (ctx: ServerContext, next: Next) => {
     try {
       let { query, params, body } = validation

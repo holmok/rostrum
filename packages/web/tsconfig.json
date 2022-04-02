@@ -2,6 +2,8 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
       "jsx": "preserve",
+      "esModuleInterop": true,
+      "target": "es6",
       "types": [
         "node"
       ],

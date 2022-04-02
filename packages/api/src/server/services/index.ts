@@ -8,6 +8,7 @@ import SystemService from './system-service'
 export interface ServiceList {
   system: () => SystemService
   users: () => UserService
+  shutdown: () => Promise<void>
 }
 
 export default function Services (config: IConfig, logger: Logger): ServiceList {
@@ -17,6 +18,7 @@ export default function Services (config: IConfig, logger: Logger): ServiceList 
   const system = new SystemService(data.system(), config, logger)
   return {
     system () { return system },
-    users () { return users }
+    users () { return users },
+    async shutdown () { await data.close() }
   }
 }

@@ -3,6 +3,7 @@
     "compilerOptions": {
         "strict": true,
         "esModuleInterop": true,
+        "target": "es6",
         "types": [
             "node"
         ],
@@ -13,10 +14,11 @@
         "baseUrl": ".",
         "outDir": "dist/",
         "rootDir": "src/",
-        "moduleResolution": "node",
+        "moduleResolution": "Node",
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
+   
         "typeRoots": [
             "node_modules/@types/"
         ],

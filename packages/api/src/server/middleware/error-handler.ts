@@ -1,7 +1,7 @@
 import { Middleware, Next } from 'koa'
 import { ServerContextState, ServerContext } from '../index'
 
-export default function ErrorHandler (): Middleware<ServerContextState, ServerContext> {
+export function ErrorHandler (): Middleware<ServerContextState, ServerContext> {
   return async (ctx: ServerContext, next: Next) => {
     try {
       await next()

@@ -1,6 +1,6 @@
 import { Logger } from 'pino'
 import { Knex } from 'knex'
-import { UserType, UserStatus, Page } from '@ninebyme/common'
+import { UserType, UserStatus, Pager } from '@ninebyme/common'
 
 export interface UserDataRow {
   id?: number
@@ -32,11 +32,11 @@ class UserData {
     return row[0]
   }
 
-  async list (page: Page): Promise<UserDataRow[]> {
+  async list (pager: Pager): Promise<UserDataRow[]> {
     const rows = await this.knex<UserDataRow>('users')
-      .offset(page.offset)
-      .limit(page.limit)
-      .orderBy(page.sortBy, page.order)
+      .offset(pager.offset)
+      .limit(pager.limit)
+      .orderBy(pager.sortBy, pager.order)
       .select()
     return rows
   }

@@ -1,4 +1,7 @@
-import { SortOrder } from '.'
+export enum AllowedAccess {
+  USER = 'user',
+  ADMIN = 'admin'
+}
 
 export enum UserType {
   ADMIN = 'admin',
@@ -10,13 +13,6 @@ export enum UserStatus {
   ACTIVE = 'active',
   DISABLED = 'disabled',
   DELETED = 'deleted',
-}
-
-export interface Page {
-  offset: number
-  limit: number
-  sortBy: string
-  order: SortOrder
 }
 
 export interface User {

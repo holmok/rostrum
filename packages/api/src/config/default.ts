@@ -2,11 +2,16 @@ import Pino from 'pino'
 import { Knex } from 'knex'
 import PG from 'pg'
 import { knexSnakeCaseMappers } from 'objection'
+import Cors from '@koa/cors'
 
 export const pwSalt: string = 'jygxnkxjhooeqbwwsqxcmquyqsahvwou'
 export interface ServerOptions {
   host: string
   port: number
+}
+
+export const cors: Cors.Options = {
+  origin: '*'
 }
 
 export const jwtSecret = process.env.JWT_SECRET ?? 'zOpENiUTLm7noaTHWlbDLVkWabkeEWFja2Z3j4lAR22OVbm2NzKRdQmCF0AF'

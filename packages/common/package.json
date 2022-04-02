@@ -13,6 +13,6 @@
     "build": "yarn lint && yarn clean && yarn compile"
   },
   "dependencies": {
-    "axios": "^0.26.0"
+    "axios": "^0.26.1"
   }
 }
