@@ -19,6 +19,11 @@ body {
   font-weight: 900;
 }
 
+.error-field {
+  background-color: pink !important;
+  border: red 1px solid !important;
+}
+
 .error {
   color: red;
   font-weight: 900;

@@ -1,97 +1,76 @@
 import { ReactElement, useState } from 'react'
 import Head from 'next/head'
 import Layout from '../components/layout'
+import { UserRegisterRequest } from '@ninebyme/common'
 // @ts-expect-error
 import * as IsEmail from 'is-email'
 
 import { getClients } from '../pages/_app'
 
+interface Errors {
+  email: boolean
+  password: boolean
+  username: boolean
+  server?: string
+}
+
+const defaultUser: UserRegisterRequest = { email: '', password: '', username: '' }
+
+const defaultErrors: Errors = { email: false, password: false, username: false }
+
 export default function Page (): ReactElement {
-  const [email, setEmail] = useState('')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  const [emailValid, setEmailValid] = useState < boolean | undefined >(undefined)
-  const [usernameValid, setUsernameValid] = useState< boolean | undefined >(undefined)
-  const [passwordValid, setPasswordValid] = useState< boolean | undefined >(undefined)
-  const [serverError, setServerError] = useState< string | undefined >(undefined)
-
+  const [user, setUser] = useState<UserRegisterRequest>(defaultUser)
+  const [errors, setErrors] = useState < Errors >(defaultErrors)
   const [success, setSuccess] = useState< boolean >(false)
-
-  const [valid, setValid] = useState(false)
+  const [submitting, setSubmitting] = useState< boolean >(false)
 
   const users = getClients().users()
 
+  const isValid = (): boolean => {
+    return !errors.email && !errors.password && !errors.username &&
+    user.email.length > 0 && user.password.length > 0 && user.username.length > 0
+  }
+
   const onEmailBlur = (e: any): void => {
-    if (e.target.value.length === 0 || !IsEmail(e.target.value)) {
-      setEmailValid(false)
-      setValid(false)
-    } else {
-      setEmailValid(true)
-      setValid(passwordValid === true && usernameValid === true)
-    }
+    setErrors({ ...errors, email: e.target.value.length === 0 || !IsEmail(e.target.value) })
   }
 
   const onEmailChange = (e: any): void => {
-    if (e.target.value.length > 0 && IsEmail(e.target.value)) {
-      setEmailValid(true)
-      setValid(passwordValid === true && usernameValid === true)
-    }
-    setEmail(e.target.value)
+    setErrors({ ...errors, email: false })
+    setUser({ ...user, email: e.target.value })
   }
 
   const onUsernameBlur = (e: any): void => {
-    if (e.target.value.length < 3) {
-      setUsernameValid(false)
-      setValid(false)
-    } else {
-      setUsernameValid(true)
-      setValid(passwordValid === true && emailValid === true)
-    }
-    setUsername(e.target.value)
+    setErrors({ ...errors, username: e.target.value.length < 3 })
   }
 
   const onUsernameChange = (e: any): void => {
-    if (e.target.value.length >= 3) {
-      setUsernameValid(true)
-      setValid(passwordValid === true && emailValid === true)
-    }
-    setUsername(e.target.value)
+    setErrors({ ...errors, username: false })
+    setUser({ ...user, username: e.target.value })
   }
 
   const onPasswordBlur = (e: any): void => {
-    if (e.target.value.length < 8) {
-      setPasswordValid(false)
-      setValid(false)
-    } else {
-      setPasswordValid(true)
-      setValid(emailValid === true && usernameValid === true)
-    }
-    setPassword(e.target.value)
+    setErrors({ ...errors, password: e.target.value.length < 8 })
   }
 
   const onPasswordChange = (e: any): void => {
-    if (e.target.value.length >= 8) {
-      setPasswordValid(true)
-      setValid(usernameValid === true && emailValid === true)
-    }
-    setPassword(e.target.value)
+    setErrors({ ...errors, password: false })
+    setUser({ ...user, password: e.target.value })
   }
 
   const handleSubmit = async (e: any): Promise<void> => {
     e.preventDefault()
-    setValid(false)
-    if (emailValid === true && usernameValid === true && passwordValid === true) {
-      console.log({ email, username, password })
+    setSubmitting(true)
+    if (isValid()) {
       try {
-        await users.register({ email, username, password })
+        await users.register(user)
         setSuccess(true)
       } catch (e: any) {
         const { response } = e
         if (response?.data != null) {
-          setServerError(response.data)
+          setErrors({ ...errors, server: response.data })
         }
-        setValid(true)
+        setSubmitting(false)
       }
     }
   }
@@ -110,39 +89,42 @@ export default function Page (): ReactElement {
         </Head>
         <h1>Register</h1>
         <p>Create a free account to get started.</p>
-        {serverError != null && <p className='error-server'>{serverError}</p>}
+        {errors.server != null && <p className='error-server'>{errors.server}</p>}
         <form onSubmit={handleSubmit}>
           <fieldset>
             <label htmlFor='email'>Email</label>
             <input
+              className={errors.email ? 'error-field' : ''}
               type='email' placeholder='Your email address...'
               id='email'
-              value={email}
+              value={user.email}
               onBlur={onEmailBlur}
               onChange={onEmailChange}
             />
-            {!(emailValid == null ? true : emailValid) && <p className='error'>Please enter a valid email address.</p>}
+            {errors.email && <p className='error'>Please enter a valid email address.</p>}
             <label htmlFor='username'>User Name</label>
             <input
               type='text'
+              className={errors.username ? 'error-field' : ''}
               placeholder='Your public user name...'
               id='username'
-              value={username}
+              value={user.username}
               onBlur={onUsernameBlur}
               onChange={onUsernameChange}
             />
-            {!(usernameValid == null ? true : usernameValid) && <p className='error'>Please enter a valid user name (at least 3 characters).</p>}
+            {errors.username && <p className='error'>Please enter a valid user name (at least 3 characters).</p>}
             <label htmlFor='password'>Password</label>
             <input
               type='password'
+              className={errors.password ? 'error-field' : ''}
               placeholder='Your password...'
               id='password'
-              value={password}
+              value={user.password}
               onBlur={onPasswordBlur}
               onChange={onPasswordChange}
             />
-            {!(passwordValid == null ? true : passwordValid) && <p className='error'>Please enter a valid password (at least 8 character).</p>}
-            <input disabled={!valid} type='submit' value='Register' />
+            {errors.password && <p className='error'>Please enter a valid password (at least 8 character).</p>}
+            <input disabled={!isValid() && !submitting} type='submit' value='Register' />
 
           </fieldset>
         </form>
