@@ -27,4 +27,6 @@ body {
 .error {
   color: red;
   font-weight: 900;
+  position: relative;
+  top: -1.5rem;
 }

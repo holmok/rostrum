@@ -32,7 +32,7 @@ export default function Page (): ReactElement {
   }
 
   const onEmailBlur = (e: any): void => {
-    setErrors({ ...errors, email: e.target.value.length === 0 || !IsEmail(e.target.value) })
+    setErrors({ ...errors, email: e.target.value.length === 0 || IsEmail(e.target.value) === false })
   }
 
   const onEmailChange = (e: any): void => {
@@ -78,6 +78,9 @@ export default function Page (): ReactElement {
   if (success) {
     return (
       <>
+        <Head>
+          <title>Registration Complete</title>
+        </Head>
         <p>User created.</p>
       </>
     )
@@ -87,47 +90,52 @@ export default function Page (): ReactElement {
         <Head>
           <title>Register</title>
         </Head>
-        <h1>Register</h1>
-        <p>Create a free account to get started.</p>
-        {errors.server != null && <p className='error-server'>{errors.server}</p>}
-        <form onSubmit={handleSubmit}>
-          <fieldset>
-            <label htmlFor='email'>Email</label>
-            <input
-              className={errors.email ? 'error-field' : ''}
-              type='email' placeholder='Your email address...'
-              id='email'
-              value={user.email}
-              onBlur={onEmailBlur}
-              onChange={onEmailChange}
-            />
-            {errors.email && <p className='error'>Please enter a valid email address.</p>}
-            <label htmlFor='username'>User Name</label>
-            <input
-              type='text'
-              className={errors.username ? 'error-field' : ''}
-              placeholder='Your public user name...'
-              id='username'
-              value={user.username}
-              onBlur={onUsernameBlur}
-              onChange={onUsernameChange}
-            />
-            {errors.username && <p className='error'>Please enter a valid user name (at least 3 characters).</p>}
-            <label htmlFor='password'>Password</label>
-            <input
-              type='password'
-              className={errors.password ? 'error-field' : ''}
-              placeholder='Your password...'
-              id='password'
-              value={user.password}
-              onBlur={onPasswordBlur}
-              onChange={onPasswordChange}
-            />
-            {errors.password && <p className='error'>Please enter a valid password (at least 8 character).</p>}
-            <input disabled={!isValid() && !submitting} type='submit' value='Register' />
+        <div className='row'>
+          <div className='column column-50 column-offset-25'>
 
-          </fieldset>
-        </form>
+            <h1>Register</h1>
+            <p>Create a free account to get started.</p>
+            {errors.server != null && <p className='error-server'>{errors.server}</p>}
+            <form onSubmit={handleSubmit}>
+              <fieldset>
+                <label htmlFor='email'>Email</label>
+                <input
+                  className={errors.email ? 'error-field' : ''}
+                  type='email' placeholder='Your email address...'
+                  id='email'
+                  value={user.email}
+                  onBlur={onEmailBlur}
+                  onChange={onEmailChange}
+                />
+                {errors.email && <div className='error'>Please enter a valid email address.</div>}
+                <label htmlFor='username'>User Name</label>
+                <input
+                  type='text'
+                  className={errors.username ? 'error-field' : ''}
+                  placeholder='Your public user name...'
+                  id='username'
+                  value={user.username}
+                  onBlur={onUsernameBlur}
+                  onChange={onUsernameChange}
+                />
+                {errors.username && <div className='error'>Please enter a valid user name (at least 3 characters).</div>}
+                <label htmlFor='password'>Password</label>
+                <input
+                  type='password'
+                  className={errors.password ? 'error-field' : ''}
+                  placeholder='Your password...'
+                  id='password'
+                  value={user.password}
+                  onBlur={onPasswordBlur}
+                  onChange={onPasswordChange}
+                />
+                {errors.password && <div className='error'>Please enter a valid password (at least 8 character).</div>}
+                <input disabled={!isValid() && !submitting} type='submit' value='Register' />
+
+              </fieldset>
+            </form>
+          </div>
+        </div>
       </>
     )
   }

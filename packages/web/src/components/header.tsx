@@ -22,6 +22,7 @@ const PageHeader: NextComponentType = () => {
             <li><Link href='/'><a onClick={hide}>Home</a></Link></li>
             <li><Link href='/about'><a onClick={hide}>About</a></Link></li>
             <li><Link href='/register'><a onClick={hide}>Register</a></Link></li>
+            <li><Link href='/login'><a onClick={hide}>Login</a></Link></li>
           </ul>
         </div>
       </section>

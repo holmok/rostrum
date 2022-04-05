@@ -57,7 +57,7 @@ class UserData {
   }
 
   async getByLogin (email: string, passwordHash: string): Promise<UserDataRow | undefined> {
-    const row = await this.knex<UserDataRow>('users').where({ email, passwordHash }).first()
+    const row = await this.knex<UserDataRow>('users').whereILike({ email }).andWhere({ passwordHash }).first()
     return row
   }
 }
